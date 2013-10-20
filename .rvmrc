@@ -1,0 +1,7 @@
+if [[ -d "${rvm_path:-$HOME/.rvm}/environments" && \
+      -s "${rvm_path:-$HOME/.rvm}/environments/ruby-2.0.0@login_songs" ]] ; then 
+  \. "${rvm_path:-$HOME/.rvm}/environments/ruby-2.0.0@login_songs"
+else 
+rvm --create use  "ruby-2.0.0@login_songs"    
+fi
+bundle
