@@ -31,6 +31,9 @@ group :doc do
   gem 'sdoc', require: false
 end
 
+
+gem 'bcrypt-ruby', '~> 3.0.0'
+
 group :development do
   gem 'pry'
   gem 'pry-debugger'

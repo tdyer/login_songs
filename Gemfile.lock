@@ -29,6 +29,7 @@ GEM
       rake
     arel (4.0.0)
     atomic (1.1.14)
+    bcrypt-ruby (3.0.1)
     better_errors (1.0.1)
       coderay (>= 1.0.0)
       erubis (>= 2.6.6)
@@ -149,6 +150,7 @@ PLATFORMS
 
 DEPENDENCIES
   annotate
+  bcrypt-ruby (~> 3.0.0)
   better_errors
   binding_of_caller
   chronic
