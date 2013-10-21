@@ -1,16 +1,26 @@
 ## Registration and Authentication
+- Indentity
+
+	Uniquely indentifies a user. Could be a username, email, api key, 
+	etc.
+- Credentials
+
+	Used to authenticate a user. Could be a password, pin, public key, encrypted hash.
+	
 - Registration/Signup
     
-    User is created with their credentials, password in this case.
+    User identity is created with their credentials, email and password in this case.
 
 -  Authentication/Login
     
-    User is authenticated using their credentials.
+    User is authenticated using their identity and credentials.
 
 ### Passwords
-We do not want to store the "plain text" passwords in the DB. Just in case the system is comprimised, cracked.
+Do not want to store the "plain text" passwords in the DB. Just in case the system is comprimised, cracked.
 
-We only stored hashed passwords. **Never store plain text passwords!!** So that if a malicious user gains access then they cannot get passwords. We're going to use the bcrypt gem to hash plain text passwords. This will done be using this gem's hash_secret method.       
+We only stored hashed passwords. **Never store plain text passwords!!** So that if a malicious user gains access then they cannot obtain passwords. We're going to use the bcrypt gem to hash plain text passwords into a crypto hash. This will done by using this gem's hash_secret method.
+
+BCrypt is just one of many types of ways to generate a hash.
 
     The general workflow for account registration and authentication in a hash-based account system is as follows:
 
@@ -20,9 +30,9 @@ We only stored hashed passwords. **Never store plain text passwords!!** So that 
 
     Steps 3 and 4 repeat everytime someone tries to login to their account.
 
-#### Need to a use a salt for crypto hashes.
+#### Need to a use a salt to generate crypto hashes.
    
-This will prevent common ways of cracking a hash. A *salt* is a random string make it more difficult to crack the hash. This salt is feed into the hash algorithim along with the plain text password to produce a cryptographic hash.
+This will prevent common ways of cracking a hash. A *salt* is a random string that makes it more difficult to crack the hash. This salt is feed into the hash algorithim along with the plain text password to produce a cryptographic hash.
 
 
 ## Registration/Signup 
@@ -37,7 +47,9 @@ This will prevent common ways of cracking a hash. A *salt* is a random string ma
 	
 `rake db:migrate`
 
-#### Open up the app/models/user.rb and annotate.
+#### Annotate models with their attributes.
+
+Uses the annotate gem to add comments to models. These comments enumerate the model's attributes. *Some* feel it's not needed.
 
 `annotate`
 
@@ -45,27 +57,33 @@ This will prevent common ways of cracking a hash. A *salt* is a random string ma
 
 `gem 'bcrypt-ruby', '~> 3.0.0'`
 
-#### Add a password to the User model. This will not be persisted in the DB!
+#### Add a password attribute to the User model. 
 
-  `attr_accessor :passord`
+**This will not be persisted in the DB!**
+
+  `attr_accessor :password`
 
 #### Add the method to the User model that will encrypt the password into the DB. 
 
-	`require "bcrypt" 
+<pre>
+	require "bcrypt" 
 
 	class User < ActiveRecord
 	  include BCrypt
 
 	  def encrypt_password
     	if password.present?
-      	  password_salt = BCrypt::Engine.generate_salt
-          password_digest = BCrypt::Engige.hash_secret(password, password_salt)
-	    end
-  	  end
-	end`
+      	  self.password_salt = BCrypt::Engine.generate_salt
+          self.password_digest = BCrypt::Engine.hash_secret(password, self.password_salt)
+        else
+          nil
+	     end
+	  end
+	end
+	   </pre>
 
 #### Open the rails console and create a user with a password. 
-*Notice that the password_digest is empty. This is the what's used to authenticate the user.*
+*Notice that the password_digest is empty *until encrypt_password is invoked*. The password_digest is used to authenticate the user.*
 	
 `u = User.new(email: 'foo@example.com', password: 'foo')`
 
@@ -86,15 +104,6 @@ This will prevent common ways of cracking a hash. A *salt* is a random string ma
         nil
       end
      end</pre>
-
-#### Go to the rails console, create a user with a password, encrypt_password.
-`User.delete_all `
-
-`u = User.new(email: 'foo@example.com', password: 'foo')`
-
-`u.encrypt_password`
-
-`u.save!`
 
 ####Authenticate the user. *Success*
 `User.authenticate("foo@example.com", "foo") `
@@ -144,7 +153,7 @@ end
 <%= form_for @user do |f| %>
   <% if @user.errors.any? %>
     &lt;div class='error_messages'&gt;
-      &lt;h2&gt;Form is invalid&lt;/h2&gt:
+      &lt;h2&gt;Form is invalid&lt;/h2&gt;
       &ltul&gt;
         <% @user.errors.full_messages.each do |message| %>
           &ltl&gt;<%= message %>&lt/l&gt;
@@ -168,6 +177,8 @@ end
 #### Fill out the User model. 
 *Let's add the password and password confirmation attributes to the User model so the above form works.*
 <pre>
+require 'bcrypt'
+
 class User < ActiveRecord::Base
   before_save :encrypt_password
   attr_accessor :password
@@ -184,8 +195,6 @@ end
 
 ### Add a user resource and root path.
 <pre>resources :users</pre>
-<pre>root 'songs#index'</pre>
-
 
 #### Register, create, a user.
 *Go to http://localhost:3000/users/new fill out the form and submit. It should work!!*
@@ -202,7 +211,7 @@ A new *Session* is created every time a user in authenticated.
 
 `rails g controller Sessions new`
 
-### Create a Login from.
+### Create a Login form.
 <pre>
 &lt;h1&gt;Log in &lt;/h1&gt;                                                               
                                                                                
@@ -247,19 +256,15 @@ def create
 
 Notice the session[:user_id]. This is provided by Rails to set a value in a browser session. 
 
-A browser session is a hash like structure that is kept in the browser so that state can be retained between HTTP requests. 
+A browser session is a hash like structure that is kept in the browser so that state can be retained between HTTP requests. Each time a HTTP Request is sent from the browser it will *also* send the currently logged in user's id to the server.
 
 In this case we are going to store the id of the current user in the browser session. So that the each request this logged in user sends will *also* provide the database id of this user.
 
-<i>Session are another good homework reading topic.</i>
+Browser cookies are used to implement sessions.
 
-## Finsish up UI
-#### Add Flash handling to the layout.
-<pre>
- <% flash.each do |name, msg| %>
-  <%= content_tag :div, msg, :id => "flash#{name}" %>
-<% end %>
-</pre>
+<i>Browser Cookies and Session are another good homework reading topic.</i>
+
+
 #### Logout.
 
 ##### Add logout link to the routes.rb
@@ -276,8 +281,30 @@ def destroy
 end
 </pre>
 
+## Finish up UI
+#### Add Flash handling to the layout.
+[Rails Flash](http://guides.rubyonrails.org/action_controller_overview.html#the-flash)
+
+[Display Messages in Views](http://guides.rubyonrails.org/v2.3.11/activerecord_validations_callbacks.html#displaying-validation-errors-in-the-view)
+<pre>
+ <% flash.each do |name, msg| %>
+  <%= content_tag :div, msg, :id => "flash#{name}" %>
+<% end %>
+</pre>
+
 #### Add sign up route.
 <pre>get "sign_up" => "users#new", :as => "sign_up"</pre>
+
+### Add current_user method to the ApplicationController
+
+<pre>
+helper_method :current_user
+  
+  private
+  def current_user
+    @current_user ||= User.find(session[:user_id]) if session[:user_id]
+  end
+</pre>
 
 #### Create links for login and logout in the layout.
 <pre>
@@ -292,13 +319,111 @@ end
 </div>
 </pre>
 
-### Add current_user method to the ApplicationController
+## Add User - Song relationship
+
+#### Create song collection association
+<pre>
+r g model song_collection user:belongs_to song:belongs_to active:boolean 
+</pre>
+<pre>
+rake db:migrate
+</pre>
+
+Add to the SongCollection join model.
+<pre>
+belongs_to :user
+belongs_to :song
+</pre>
+
+#### Update user model with song collection 
+<pre>
+  has_many :song_collections                                                   
+  has_many :songs, through: :song_collections
+  </pre>
+
+#### Seed a couple of users, songs and song collections.
 
 <pre>
-helper_method :current_user
+foxy = Song.create(name: 'Foxy', description: "The artist is Oblast", url: 'http://www.youtube.com/watch?v=a_rflWF-iBg')
+
+c_jesus = Song.create(name: 'Chocolate Jesus', description: "The artist is Tom Waits", url: 'http://www.youtube.com/watch?v=m5kHx1itU8c')
+
+ended  = Song.create(name: "Cause we've ended as lovers", description: "The artist is Jeff Beck", url: 'http://www.youtube.c')
+
+golden = Song.create(name: 'Golden Age', description: "The artist is Beck", url: 'http://www.youtube.com/watch?v=Y6zAT15vaFk')
+
+
+foo = User.create(email: 'foo@example.com', password: 'foo')
+bar = User.create(email: 'bar@example.com', password: 'bar')
+
+foo.songs << foxy
+foo.songs << golden
+foo.save!
+
+bar.songs << c_jesus
+bar.save!
   
-  private
-  def current_user
-    @current_user ||= User.find(session[:user_id]) if session[:user_id]
-  end
+</pre>
+
+<pre>
+rake db:seed
+</pre>
+
+#### Check it out in the rails console
+
+#### Add a Song filter.
+Based on the currently logged in user, current_user to the SongsController. 
+
+<pre>
+def index
+  if current_user                                                            
+      @songs = current_user.songs                                              
+    else                                                                       
+      @songs = Song.all                                                        
+    end                
+end
+</pre>
+
+#### Update the current_user method in the ApplicationController.
+
+<pre>
+def current_user                                                             
+    if session[:user_id]                                                       
+      @current_user ||= User.find(session[:user_id])                           
+    else                                                                       
+      nil                                                                      
+    end                                                                        
+  end        
+</pre>
+
+#### Add an action in the SongsController that will show only *active* songs.
+
+<pre>
+                                                                               
+  def valid_songs                                                              
+    if current_user                                                            
+      @songs = current_user.active_songs                                       
+    else                                                                       
+      @songs = SongCollection.active.map(&:song)                               
+    end                                                                        
+    render :index                                                              
+  end                                                                          
+         
+</pre>
+
+#### In the SongCollection model add a scope.
+<pre>
+ scope :active, lambda { where(active: true)}
+</pre>
+
+#### In the User model add a method to get active songs for each User.
+<pre>
+def active_songs                                                             
+    self.songs.merge(SongCollection.active)                                    
+  end    
+</pre>
+
+#### Add a route for valid_songs
+<pre>
+get "valid_songs" => "songs#valid_songs", :as => "valid_songs" 
 </pre>
