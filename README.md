@@ -36,9 +36,10 @@ This will prevent common ways of cracking a hash. A *salt* is a random string th
 
 ### Links
 - [Rails Security Guide](http://guides.rubyonrails.org/security.html)
-- [7 Rails Security Tips](http://railscasts.com/episodes/178-seven-security-tips)
+- [7 Rails Security Tips, a little dated](http://railscasts.com/episodes/178-seven-security-tips)
 - [Sessions](http://guides.rubyonrails.org/security.html#sessions)
 - [Cross Site Request Forgery CSRF](http://guides.rubyonrails.org/security.html#cross-site-request-forgery-csrf)
 - [Railscasts Authentication](http://railscasts.com/?tag_id=25&utf8=%E2%9C%93)
 - [has_secure_password Simple Authentication](http://railscasts.com/episodes/270-authentication-in-rails-3-1)
+
 ### See the steps.txt file for instructions.
