@@ -6,8 +6,9 @@ LoginSongs::Application.routes.draw do
   resources :sessions
     
   get "sign_up" => "users#new", :as => "sign_up"
-  
+  get "log_out" => "sessions#destroy", :as => "log_out"
   get "log_in" => "sessions#new", :as => "log_in"
+  get "valid_songs" => "songs#valid_songs", :as => "valid_songs" 
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
