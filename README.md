@@ -148,7 +148,6 @@ end
 
 #### Create a Registration form.
 *In app/users/new.html.erb*
-
 <pre>
 <%= form_for @user do |f| %>
   <% if @user.errors.any? %>
