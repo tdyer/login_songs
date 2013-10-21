@@ -34,4 +34,11 @@ BCrypt is just one of many types of ways to generate a hash.
    
 This will prevent common ways of cracking a hash. A *salt* is a random string that makes it more difficult to crack the hash. This salt is feed into the hash algorithim along with the plain text password to produce a cryptographic hash.
 
+### Links
+- [Rails Security Guide](http://guides.rubyonrails.org/security.html)
+- [7 Rails Security Tips](http://railscasts.com/episodes/178-seven-security-tips)
+- [Sessions](http://guides.rubyonrails.org/security.html#sessions)
+- [Cross Site Request Forgery CSRF](http://guides.rubyonrails.org/security.html#cross-site-request-forgery-csrf)
+- [Railscasts Authentication](http://railscasts.com/?tag_id=25&utf8=%E2%9C%93)
+- [has_secure_password Simple Authentication](http://railscasts.com/episodes/270-authentication-in-rails-3-1)
 ### See the steps.txt file for instructions.
