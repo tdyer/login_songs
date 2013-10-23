@@ -1,0 +1,41 @@
+- Look at associations and the parameter they send in a HTTP request.
+This will be done for a number of "User Stories"
+
+User Story is a brief description of feature. 
+
+* create branch view_playlist
+- Story: View all playlists.
+Given I'm a user that is *not* logged in.
+When I view playlists.
+I should see all users public playlists.
+
+Note: have to create a Playlist this will be join btw User and Songs. Each playlist will need to have visibility attribute that can be either public or private. This attribute should be a string because we may want to add other values as time goes on. For example, we MAY want to all playlist be visible to other users in the same group (band, family, etc.). If/when we group users.
+
+* merge branch into master
+
+* create branch add_playlist
+- Story: Allow a user to create playlists
+Given I'm a user that is logged in.
+When I view playlists.
+I should see all my playlists.
+And I should be able to create, read, update and delete playlist.
+
+* merge branch into master
+
+- Story: View my playlists
+Given I'm a user that is logged in.
+When I view playlists.
+I should see all my playlists. (public and private)
+
+- Story: Manage (CRUD) my playlists
+Given I'm a user that is logged in.
+When I view playlists.
+I should be able to show, edit and delete my playlists.
+
+- Story: View another user's playlists
+Given I'm a user. (logged in or not)
+When I view a specific user's playlists.
+( /user/2/playlists)
+I should see only this user's public playlist.
+
+Note: must create a nested playlist resource for each user!

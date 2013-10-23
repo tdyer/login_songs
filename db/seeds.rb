@@ -11,9 +11,9 @@ golden = Song.create(name: 'Golden Age', description: "The artist is Beck", url:
 foo = User.create(email: 'foo@example.com', password: 'foo')
 bar = User.create(email: 'bar@example.com', password: 'bar')
 
-foo.songs << foxy
-foo.songs << golden
-foo.save!
+# foo.songs << foxy
+# foo.songs << golden
+# foo.save!
 
-bar.songs << c_jesus
-bar.save!
+# bar.songs << c_jesus
+# bar.save!

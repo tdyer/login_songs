@@ -24,12 +24,9 @@ class User < ActiveRecord::Base
   validates_presence_of :email
   validates_uniqueness_of :email
 
-  has_many :song_collections
-  has_many :songs, through: :song_collections
-
-  def active_songs 
-    self.songs.merge(SongCollection.active)
-  end    
+  #def active_songs 
+  #  self.songs.merge(SongCollection.active)
+  #end    
 
   def encrypt_password
     if password.present?
