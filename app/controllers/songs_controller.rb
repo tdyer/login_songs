@@ -4,22 +4,9 @@ class SongsController < ApplicationController
   # GET /songs
   # GET /songs.json
   def index
-    if current_user
-      @songs = current_user.songs
-    else
-      @songs = Song.all
-    end
+    @songs = Song.all
   end
 
-  def valid_songs
-    if current_user
-      @songs = current_user.active_songs
-    else 
-      @songs = SongCollection.active.map(&:song)
-    end
-    render :index
-  end
-  
   # GET /songs/1
   # GET /songs/1.json
   def show
@@ -38,7 +25,6 @@ class SongsController < ApplicationController
   # POST /songs.json
   def create
     @song = Song.new(song_params)
-    current_user.songs << @song
 
     respond_to do |format|
       if @song.save
